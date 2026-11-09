@@ -1,0 +1,15 @@
+Uma plataforma voltada para a criação universal e o gerenciamento de fichas de
+personagens de RPG em cenários de grupo, visando suprir a falta de plataformas
+dedicadas a sistemas de nicho ou próprios.
+A arquitetura da plataforma tem como foco um criador customizável de fichas (sua versão
+final será acessível apenas por uma chave digital comprada). Para atender às necessidades
+de criação de uma ficha de RPG, a interface do usuário é estruturada em colunas, abas e
+seções especializadas para as diversas opções de mecânicas de jogo (contadores de
+pontos, atributos, números, listas, habilidades, etc...), permitindo ainda a replicação das
+estruturas por meio de modelos (templates) salvos.
+Além disso, o projeto conta com uma aba para upload de documentos e arquivos de rpg,
+bem como uma interface de criação e organização de um cenário de grupo
+(mesa/campanha).
+
+-- 1 of 1 --
+

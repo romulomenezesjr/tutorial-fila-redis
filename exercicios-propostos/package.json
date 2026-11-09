@@ -1,0 +1,26 @@
+{
+  "name": "exercicios-propostos-fila-redis",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "api": "node filas/api.js",
+    "worker": "node filas/worker.js",
+    "scheduler": "node filas/agendador.js",
+    "benchmark": "node filas/benchmark.js",
+    "streams": "node streams/demo.js",
+    "bull:api": "node bullmq/api.js",
+    "bull:worker": "node bullmq/worker.js",
+    "pdf:api": "node pdf/api.js",
+    "pdf:worker": "node pdf/worker.js"
+  },
+  "dependencies": {
+    "bullmq": "^6.7.1",
+    "express": "^5.3.0",
+    "ioredis": "^6.0.0",
+    "multer": "^2.5.0",
+    "pdf-parse": "^2.4.5",
+    "redis": "^6.3.1"
+  }
+}

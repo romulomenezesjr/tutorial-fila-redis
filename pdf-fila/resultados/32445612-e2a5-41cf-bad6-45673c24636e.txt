@@ -1,0 +1,116 @@
+aba
+id INT
+titulo VARCHAR(10…
+posicao_Aba INT
+id_Coluna INT
+Indexes
+anotacaocheckbox
+id INT
+rotulo_AC VARCHAR(100)
+descricao_AC VARCHAR(255)
+esta_Marcado_AC TINYINT(…
+id_Secao INT
+Indexes
+anotacaodetalha…
+id INT
+rotulo_AD VARCHAR(100)
+descricao_AD TEXT
+anotacao_Extra TEXT
+id_Secao INT
+Indexes
+anotacaosimpl…
+id INT
+rotulo_AS VARCHAR(100)
+campo_Texto_AS TEXT
+id_Secao INT
+Indexes
+atributocomplexo
+id INT
+nome_Atributo_C VARCHAR(100)
+subtitulo_Anotacao VARCHAR(150)
+valor_Base_C INT
+valor_Bonus_C INT
+valor_Outros_C VARCHAR(255)
+criterio_Ordenacao INT
+id_Secao INT
+Indexes
+atributoduplo
+id INT
+nome_Atributo_D VARCHAR(10…
+valor_Grande_D INT
+valor_Pequeno_D INT
+id_Secao INT
+Indexes
+atributosimples
+id INT
+nome_Atributo VARCHAR(100)
+valor_Atributo INT
+é_Horizontal TINYINT(1)
+id_Secao INT
+Indexes
+checkbox
+id INT
+rotulo VARCHAR(100)
+esta_Marcado TINYINT(…
+id_Secao INT
+Indexes
+coluna
+id INT
+limite_abas INT
+esta_ativa TINYINT(…
+posicao_Coluna INT
+id_Template INT
+Indexes
+contador
+id INT
+nome_recurso_F VARCHAR(100)
+valor_Atual INT
+valor_Maximo INT
+tipo_contador VARCHAR(50)
+estilo_seletor VARCHAR(50)
+id_Secao INT
+Indexes
+fichapersonagem
+id INT
+nome_Personagem VARCHAR(100)
+modo_Atual VARCHAR(50)
+data_Criacao DATETIME
+id_Usuario INT
+Indexes
+informacaocurta
+id INT
+campo_Texto_IC VARCHAR(255)
+texto_Placeholder VARCHAR(25…
+id_Secao INT
+Indexes
+rolagemdados
+id INT
+nome_Atalho VARCHAR(100)
+campo_expressao VARCHAR(25…
+tipo_Rolagem VARCHAR(50)
+id_Secao INT
+Indexes
+secao
+id INT
+titulo VARCHAR(10…
+conteudo TEXT
+posicao_Secao INT
+id_Aba INT
+Indexes
+template
+id INT
+nome_template VARCHAR(100)
+data_Criacao DATETIME
+id_Ficha INT
+Indexes
+usuario
+id INT
+nome VARCHAR(100)
+email VARCHAR(100)
+senha_Usuario VARCHAR(255)
+data_Cadastro DATETIME
+imagemUrl_Avatar VARCHAR(25…
+Indexes
+
+-- 1 of 1 --
+

@@ -1,0 +1,220 @@
+Relatório do projeto
+1. Resumo e proposta
+O repositório contém uma aplicação web chamada RPGpédia, voltada à
+criação e ao gerenciamento de fichas de personagens de RPG. A
+proposta é permitir que grupos usem uma plataforma flexível mesmo
+quando jogam sistemas de nicho ou regras próprias, em vez de
+depender de fichas pré-configuradas para sistemas populares.
+O projeto também reúne recursos de organização de campanhas e
+documentos. A proposta está descrita em LEIAME.MD e é
+implementada principalmente em controladorRotas.py e
+controladorBD.py.
+2. Funcionalidades
+Fichas de personagem
+A funcionalidade central é um editor de fichas organizado em até três
+colunas, com abas, seções e componentes configuráveis. Há dois
+modos de uso:
+• Modo Jogo: consulta e manipula os valores da ficha.
+• Modo Edição: ajusta sua estrutura e seus dados.
+Os componentes previstos no modelo incluem informações curtas,
+contadores, caixas de seleção, atributos simples, duplos ou complexos
+e anotações simples, detalhadas ou com checkbox. A estrutura pode
+ser salva como template e aplicada a outras fichas. A interface e suas
+
+-- 1 of 7 --
+
+
+
+operações ficam concentradas em criarPersonagem.html e nos
+arquivos criador-core.js, criador-render.js e criador-
+actions.js.
+O criador também inclui um simulador de dados, pilha de dados,
+histórico de rolagens da sessão e opções de fórmula, incluindo
+contagem de sucessos e explosão de dados.
+Campanhas
+O usuário pode criar campanhas, participar delas com um código,
+vincular fichas de personagens e anexar livros da biblioteca. O mestre
+pode editar os dados da campanha e gerenciar seus vínculos e
+arquivos. A tela principal correspondente é campanha.html.
+Biblioteca de documentos
+A biblioteca permite enviar e remover PDFs pessoais. Os arquivos são
+organizados em diretórios por usuário dentro de static/uploads/;
+campanhas podem manter referências a esses PDFs. A interface está
+em livros.html, com PDF.js carregado de uma CDN para exibição
+de documentos.
+Usuários e perfil
+Há login baseado em e-mail e senha, sessão, perfil com edição de
+nome e avatar, além de uma chave de ativação que libera recursos de
+criação de fichas e campanhas (para simular futuro recurso de
+desbloqueio por assinatura). As telas relacionadas são login.html e
+perfil.html.
+Observação sobre o estágio do sistema: o login tem comportamento
+explicitamente voltado a testes: um e-mail ainda não cadastrado pode
+gerar um usuário novo, e a tela informa que é possível entrar com
+qualquer e-mail e senha nesse primeiro acesso. A chave de teste
+também está escrita no código e exibida na interface. Portanto, esses
+mecanismos devem ser entendidos como protótipos, não como
+
+-- 2 of 7 --
+
+
+
+autenticação ou licenciamento prontos para produção.
+3. Tecnologias
+• Python: backend e modelo orientado a objetos.
+• Flask 3.1.3: servidor web, rotas, sessões e renderização.
+• Jinja2: templates HTML renderizados pelo Flask.
+• SQLite: banco relacional local.
+• JavaScript: renderização dinâmica, interação do editor, rolagem
+de dados e comunicação com a API.
+• HTML e CSS: interface; Tailwind CSS é carregado via CDN, junto
+a estilos próprios em style.css.
+• PDF.js: leitura de PDFs no navegador via CDN.
+As dependências Python estão fixadas em requirements.txt. Não
+encontrei uma configuração de bundler ou processo de compilação do
+frontend: o JavaScript e o CSS são servidos como arquivos estáticos e
+o Tailwind vem de CDN.
+4. Organização dos arquivos
+Arquivo ou diretório Função
+LEIAME.MD Apresentação da proposta,
+tecnologias e funcionalidades.
+classes.py Classes de domínio — usuário,
+campanha, ficha, colunas, abas,
+seções e componentes — e exceções
+da aplicação.
+config.py Configurações de banco, uploads,
+limites e perfis de desenvolvimento/
+produção.
+
+-- 3 of 7 --
+
+
+
+controladorRotas.py Aplicação Flask, rotas web, endpoints
+JSON, uploads e verificações de
+acesso.
+controladorBD.py Conexão SQLite, inicialização do
+esquema e operações de
+persistência.
+schema.sql Definição das tabelas e chaves
+estrangeiras.
+requirements.txt Dependências Python com versões
+fixadas.
+templates/ Telas Jinja/HTML para início, login,
+perfil, campanhas, personagens e
+biblioteca.
+templates/partials/ Fragmentos reutilizáveis, como
+mensagens flash.
+static/js/ Scripts do editor de fichas: estado,
+renderização e ações.
+static/style/ Estilos próprios.
+static/images/ Imagens estáticas, incluindo o logo.
+static/avatars/ e
+static/uploads/
+Destinos configurados para avatares
+e uploads.
+rpg_plataforma.db Arquivo de banco SQLite incluído no
+repositório.
+O controlador Flask inicializa o banco usando schema.sql e tem rotas
+para páginas, ações de campanha, fichas, templates e componentes. A
+interface do editor consome endpoints JSON em /api/ficha/....
+5. Banco de dados
+O esquema define 16 tabelas. As tabelas estruturam a conta e as
+fichas de modo relacional; parte dos dados de campanha e da própria
+
+-- 4 of 7 --
+
+
+
+ficha também é guardada em JSON.
+Usuários e campanhas
+• Usuario: nome, e-mail único, hash de senha, data de cadastro,
+imagem de avatar e estado da chave de ativação.
+• Campanha: nome, descrição, data de criação e id_mestre, que
+referencia Usuario.id.
+• A lista de participantes, fichas vinculadas e arquivos da
+campanha é armazenada como JSON no campo
+Campanha.lista_personagens, em vez de tabelas de junção
+próprias.
+A chave estrangeira Campanha.id_mestre → Usuario.id usa
+exclusão em cascata.
+Fichas e templates
+• FichaPersonagem: nome, aspecto (frase que resume a ideia do
+personagem), data de criação, id_usuario e estrutura_json
+(usada em templates, é um campo não obrigatório).
+• Template: nome, data, JSON da estrutura, usuário proprietário
+(id_usuario) e ficha de origem (id_ficha).
+• Coluna: posição, estado ativo, limite de abas, aba ativa e
+referências a ficha ou template.
+As relações declaradas são:
+• FichaPersonagem.id_usuario → Usuario.id, com
+exclusão em cascata.
+• Template.id_usuario → Usuario.id, com exclusão em
+cascata.
+• Template.id_ficha → FichaPersonagem.id, com ON
+DELETE SET NULL.
+• Coluna.id_ficha → FichaPersonagem.id e
+Coluna.id_template → Template.id, ambas com exclusão
+em cascata.
+
+-- 5 of 7 --
+
+
+
+Estrutura hierárquica da ficha
+• Aba referencia Coluna.
+• Secao referencia Aba.
+• As tabelas de componentes referenciam Secao.
+As tabelas de componentes são:
+1. InformacaoCurta
+2. Contador
+3. Checkbox
+4. AnotacaoSimples
+5. AnotacaoDetalhada
+6. AnotacaoCheckbox
+7. AtributoSimples
+8. AtributoDuplo
+9. AtributoComplexo
+A hierarquia relacional é, portanto, usuário → ficha → coluna → aba
+→ seção → componente. A exclusão das entidades superiores pode
+propagar-se às inferiores por chaves estrangeiras com ON DELETE
+CASCADE.
+JSON junto das tabelas relacionais
+O armazenamento da ficha é híbrido: sua hierarquia tem tabelas
+próprias, mas existe também FichaPersonagem.estrutura_json,
+usada para serializar e recuperar o conteúdo completo. Templates
+guardam uma cópia da estrutura em JSON. Já as listas de participantes,
+fichas e arquivos de campanha ficam serializadas em um único campo
+JSON.
+Isso significa que, embora exista uma estrutura relacional para a ficha,
+campanha–participantes e campanha–fichas não aparecem como
+relações de junção com chaves estrangeiras no esquema atual. O
+conteúdo do banco não foi inspecionado para este relatório; a descrição
+acima se refere ao esquema definido no repositório.
+
+-- 6 of 7 --
+
+
+
+6. Pontos de atenção
+• A configuração padrão de execução é de desenvolvimento:
+controladorRotas.py inicia o Flask com debug=True.
+• config.py contém uma chave secreta padrão e uma chave de
+teste fixa; ambas devem ser substituídas/configuradas
+adequadamente antes de qualquer implantação real.
+• A senha é transformada em SHA-256 diretamente no modelo
+Usuario. O projeto não apresenta, no código examinado, um
+fluxo de registro e autenticação voltado a produção.
+• A documentação menciona recursos como templates JSON e
+sistema de gerenciamento; os arquivos de backend confirmam
+templates e persistência. Já funcionalidades que não apareçam
+nas rotas ou telas implementadas devem ser tratadas como
+intenção, não como entrega garantida.
+Em síntese: é um protótipo acadêmico de plataforma web para montar
+fichas universais de RPG, organizá-las em campanhas e associá-las a
+documentos. Sua arquitetura usa Flask e SQLite no backend, templates
+Jinja e JavaScript no frontend, com um modelo de ficha flexível
+sustentado por tabelas relacionais e JSON
+
+-- 7 of 7 --
+

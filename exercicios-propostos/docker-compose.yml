@@ -1,0 +1,11 @@
+services:
+  redis:
+    image: redis:8
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-dados:/data
+
+volumes:
+  redis-dados:

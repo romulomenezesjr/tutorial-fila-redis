@@ -1,0 +1,23 @@
+{
+  "name": "pdf-fila",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api.js",
+  "scripts": {
+    "api": "node api.js",
+    "worker": "node worker.js",
+    "monitor": "node monitor.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "bullmq": "^6.7.2",
+    "express": "^5.3.0",
+    "ioredis": "^6.0.0",
+    "multer": "^2.5.0",
+    "pdf-parse": "^2.4.5",
+    "redis": "^6.3.1"
+  }
+}

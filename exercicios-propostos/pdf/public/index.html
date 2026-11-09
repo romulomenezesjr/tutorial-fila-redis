@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fila de PDFs</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; max-width: 900px; margin: 32px auto; padding: 0 16px; color: #202b2a; }
+    h1 { font-size: 1.8rem; }
+    form { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 0; border-block: 1px solid #ccd5d2; }
+    button { padding: 7px 12px; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 8px; border-bottom: 1px solid #e1e7e5; text-align: left; }
+    .na_fila { color: #8a5700; } .processando { color: #075e78; }
+    .concluido { color: #176b3a; } .erro, .cancelado { color: #a32626; }
+  </style>
+</head>
+<body>
+  <h1>Extração de texto de PDFs</h1>
+  <form id="formulario">
+    <input type="file" name="arquivos" accept="application/pdf" multiple required>
+    <button type="submit">Enviar PDFs</button>
+  </form>
+  <p id="mensagem" role="status"></p>
+  <table>
+    <thead><tr><th>Arquivo</th><th>Status</th><th>Páginas</th><th>Ações</th></tr></thead>
+    <tbody id="jobs"></tbody>
+  </table>
+  <script>
+    const formulario = document.querySelector('#formulario');
+    const mensagem = document.querySelector('#mensagem');
+    const corpo = document.querySelector('#jobs');
+    const jobs = new Map();
+
+    function desenhar(job) {
+      jobs.set(job.id, { ...jobs.get(job.id), ...job });
+      const dados = jobs.get(job.id);
+      let linha = document.querySelector(`[data-job="${dados.id}"]`);
+      if (!linha) {
+        linha = document.createElement('tr');
+        linha.dataset.job = dados.id;
+        for (let indice = 0; indice < 4; indice++) linha.append(document.createElement('td'));
+        corpo.append(linha);
+      }
+      linha.children[0].textContent = dados.nome ?? dados.id;
+      linha.children[1].textContent = dados.status ?? dados.tipo;
+      linha.children[1].className = dados.status ?? dados.tipo;
+      linha.children[2].textContent = `${dados.pagina ?? 0}/${dados.paginas || '?'}`;
+      linha.children[3].replaceChildren();
+      if (['na_fila', 'processando'].includes(dados.status)) {
+        const cancelar = document.createElement('button');
+        cancelar.type = 'button';
+        cancelar.textContent = 'Cancelar';
+        cancelar.addEventListener('click', async () => {
+          const resposta = await fetch(`/pdfs/${dados.id}`, { method: 'DELETE' });
+          const retorno = await resposta.json();
+          mensagem.textContent = retorno.erro ?? retorno.status;
+        });
+        linha.children[3].append(cancelar);
+      } else if (dados.status === 'concluido') {
+        const link = document.createElement('a');
+        link.href = `/pdfs/${dados.id}/texto`;
+        link.textContent = 'Abrir texto';
+        linha.children[3].append(link);
+      }
+    }
+
+    formulario.addEventListener('submit', async (evento) => {
+      evento.preventDefault();
+      const resposta = await fetch('/pdfs', { method: 'POST', body: new FormData(formulario) });
+      const retorno = await resposta.json();
+      if (!resposta.ok) {
+        mensagem.textContent = retorno.erro;
+        return;
+      }
+      for (const job of retorno) desenhar(job);
+      mensagem.textContent = `${retorno.length} arquivo(s) enfileirado(s).`;
+      formulario.reset();
+    });
+
+    const eventos = new EventSource('/eventos');
+    eventos.onmessage = ({ data }) => {
+      const evento = JSON.parse(data);
+      if (jobs.has(evento.id)) desenhar({ ...evento, status: evento.tipo });
+    };
+  </script>
+</body>
+</html>
